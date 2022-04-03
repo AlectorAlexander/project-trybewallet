@@ -1,7 +1,22 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import Login from './pages/Login';
+import Wallet from './pages/Wallet';
+import store from './store';
 
 function App() {
-  return <div>Hello, TrybeWallet!</div>;
+  return (
+    <div>
+      <Provider store={ store }>
+        <Switch>
+          <Route exact path="/" component={ Login } />
+          <Route path="/carteira" component={ Wallet } />
+        </Switch>
+      </Provider>
+      ,
+    </div>
+  );
 }
 
 export default App;
