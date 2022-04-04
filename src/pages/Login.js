@@ -29,21 +29,25 @@ class Login extends React.Component {
       <div>
         <fieldset>
           <form>
-            <label htmlFor="email" data-testid="email-input">
+            <label htmlFor="email">
               <input
+                data-testid="email-input"
                 type="email"
                 onChange={ this.handleChange }
                 value={ email }
                 name="email"
+                id="email"
                 placeholder="Email"
               />
             </label>
-            <label htmlFor="password" data-testid="password-input">
+            <label htmlFor="password">
               <input
                 type="password"
+                data-testid="password-input"
                 value={ password }
                 onChange={ this.handleChange }
                 name="password"
+                id="password"
                 placeholder="Password"
               />
             </label>
