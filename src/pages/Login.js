@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
 import { connect } from 'react-redux';
-import userAction from '../actions';
+import { userAction } from '../actions';
 
 class Login extends React.Component {
   constructor() {
@@ -20,7 +19,7 @@ class Login extends React.Component {
 
   render() {
     const { email, password } = this.state;
-    const { click } = this.props;
+    const { click, history } = this.props;
     const oLintEncheOsaco = 6;
     const senhaLenght = password.length >= oLintEncheOsaco;
     const emailValidade = (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email));
@@ -51,16 +50,14 @@ class Login extends React.Component {
                 placeholder="Password"
               />
             </label>
-            <Link to="/carteira">
-              <button
-                id="button"
-                disabled={ !(senhaLenght && emailValidade) }
-                type="button"
-                onClick={ () => click(email, password) }
-              >
-                Entrar
-              </button>
-            </Link>
+            <button
+              id="button"
+              disabled={ !(senhaLenght && emailValidade) }
+              type="button"
+              onClick={ () => click(email, password) && history.push('./carteira') }
+            >
+              Entrar
+            </button>
           </form>
         </fieldset>
       </div>

@@ -1,5 +1,3 @@
-import USER_LOGIN from './actionTypes';
+export const userAction = (email, password) => ({ type: 'USER_LOGIN', email, password });
 
-const userAction = (email, password) => ({ type: USER_LOGIN, email, password });
-
-export default userAction;
+export const WalletAction = (currencies) => ({ type: 'WALLET', currencies });
