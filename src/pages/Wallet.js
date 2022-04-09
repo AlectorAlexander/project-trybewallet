@@ -19,6 +19,20 @@ class Wallet extends React.Component {
     this.setState({ currencies: api });
   }
 
+  addExpensesToLocalState = () => {
+    const { expenses } = this.state;
+    const id = expenses.length;
+    const { value } = document.getElementById('valor');
+    const description = document.getElementById('description').value;
+    const currency = document.getElementById('Moeda').value;
+    const method = document.getElementById('método').value;
+    const tag = document.getElementById('despesa').value;
+    this.setState((prvwsStt) => ({
+      expenses: [...prvwsStt.expenses, { id, value, description, currency, method, tag }],
+    }));
+    document.getElementById('form').reset();
+  }
+
   render() {
     const { currencies: oldsCu } = this.state;
     const currencies = Object.keys(oldsCu).filter((coin) => coin !== 'USDT');
@@ -27,10 +41,20 @@ class Wallet extends React.Component {
     return (
       <div>
         <Header />
-        <form>
-          <fieldset>
-            <input type="number" data-testid="value-input" placeholder="Valor" />
-            <input type="text" data-testid="description-input" placeholder="Descrição" />
+        <fieldset>
+          <form id="form">
+            <input
+              type="number"
+              id="valor"
+              data-testid="value-input"
+              placeholder="Valor"
+            />
+            <input
+              type="text"
+              id="description"
+              data-testid="description-input"
+              placeholder="Descrição"
+            />
             <label htmlFor="Moeda">
               <span>Moeda: </span>
               <select id="Moeda" data-testid="currency-input">
@@ -55,8 +79,12 @@ class Wallet extends React.Component {
                 ))}
               </select>
             </label>
-          </fieldset>
-        </form>
+            <button type="button" onClick={ () => this.addExpensesToLocalState() }>
+              Adicionar Despesas
+            </button>
+          </form>
+        </fieldset>
+
       </div>
     );
   }
