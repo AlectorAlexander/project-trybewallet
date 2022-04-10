@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import fetchWallet from '../services/fetchWallet';
 import Header from '../components/Header';
 import { expensesAction } from '../actions';
+import Form from '../components/Form';
+import Table from '../components/Table';
 
 class Wallet extends React.Component {
   constructor() {
@@ -58,62 +60,28 @@ class Wallet extends React.Component {
 
   render() {
     const { expenseHeader, currencies: oldsCu } = this.state;
+    const { expenses } = this.props;
     const currencies = Object.keys(oldsCu).filter((coin) => coin !== 'USDT');
     const metodoDePagamento = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
     const despesas = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
     return (
       <div>
         <Header api={ oldsCu } expens={ expenseHeader } />
-        <fieldset>
-          <form id="form">
-            <input
-              type="number"
-              id="valor"
-              data-testid="value-input"
-              placeholder="Valor"
-            />
-            <input
-              type="text"
-              id="description"
-              data-testid="description-input"
-              placeholder="Descrição"
-            />
-            <label htmlFor="Moeda">
-              <span>Moeda: </span>
-              <select id="Moeda" data-testid="currency-input">
-                {currencies.map((coin, i) => (
-                  <option key={ i }>{ coin }</option>
-                ))}
-              </select>
-            </label>
-            <label htmlFor="método">
-              <span>Método de pagamento: </span>
-              <select id="método" data-testid="method-input">
-                {metodoDePagamento.map((metod, i) => (
-                  <option key={ i }>{ metod }</option>
-                ))}
-              </select>
-            </label>
-            <label htmlFor="despesa">
-              <span>Tipo de despesa: </span>
-              <select id="despesa" data-testid="tag-input">
-                {despesas.map((metod, i) => (
-                  <option key={ i }>{ metod }</option>
-                ))}
-              </select>
-            </label>
-            <button type="button" onClick={ () => this.addExpensesToLocalState() }>
-              Adicionar Despesas
-            </button>
-          </form>
-        </fieldset>
-
+        <Form
+          currencies={ currencies }
+          metodoDePagamento={ metodoDePagamento }
+          despesas={ despesas }
+          addExpensesToLocalState={ this.addExpensesToLocalState }
+        />
+        {expenses
+        && <Table expenses={ expenses } />}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
+  expenses: state.wallet.expenses,
   email: state.user.email,
 });
 
