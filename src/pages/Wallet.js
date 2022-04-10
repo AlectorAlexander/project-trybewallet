@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import { connect } from 'react-redux';
 import fetchWallet from '../services/fetchWallet';
 import Header from '../components/Header';
+import { expensesAction } from '../actions';
 
 class Wallet extends React.Component {
   constructor() {
@@ -11,6 +12,7 @@ class Wallet extends React.Component {
     this.state = {
       currencies: [],
       expenses: [],
+      expenseHeader: 0,
     };
   }
 
@@ -19,8 +21,11 @@ class Wallet extends React.Component {
     this.setState({ currencies: api });
   }
 
-  addExpensesToLocalState = () => {
+  addExpensesToLocalState = async () => {
     const { expenses } = this.state;
+    const currencies = await fetchWallet();
+    delete currencies.USDT;
+    const exchangeRates = { ...currencies };
     const id = expenses.length;
     const { value } = document.getElementById('valor');
     const description = document.getElementById('description').value;
@@ -28,19 +33,37 @@ class Wallet extends React.Component {
     const method = document.getElementById('método').value;
     const tag = document.getElementById('despesa').value;
     this.setState((prvwsStt) => ({
-      expenses: [...prvwsStt.expenses, { id, value, description, currency, method, tag }],
-    }));
+      expenses: [...prvwsStt.expenses,
+        { id, value, description, currency, method, tag, exchangeRates }],
+    }), this.addExpensesToGlobalState);
     document.getElementById('form').reset();
   }
 
+  addExpensesToGlobalState = () => {
+    const { dispExpenses } = this.props;
+    const { expenses } = this.state;
+    dispExpenses(expenses);
+    // Breno Lopes da tribo B me ajudou com a lógica do code abaixo:
+    const expense = expenses.map((element) => {
+      const { currency } = element;
+      const { exchangeRates } = element;
+      const { ask } = exchangeRates[currency];
+      const { value } = element;
+      return Number(value) * Number(ask);
+    });
+    const expenseHeader = expense.reduce((acc, crr) => Number(acc) + Number(crr))
+      .toFixed(2);
+    this.setState({ expenseHeader });
+  }
+
   render() {
-    const { currencies: oldsCu } = this.state;
+    const { expenseHeader, currencies: oldsCu } = this.state;
     const currencies = Object.keys(oldsCu).filter((coin) => coin !== 'USDT');
     const metodoDePagamento = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
     const despesas = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
     return (
       <div>
-        <Header />
+        <Header api={ oldsCu } expens={ expenseHeader } />
         <fieldset>
           <form id="form">
             <input
@@ -94,12 +117,12 @@ const mapStateToProps = (state) => ({
   email: state.user.email,
 });
 
-// const mapDispatchToProps = (dispatch) => ({
-//   WalletTry: (api) => dispatch(WalletAction(api)),
-// });
+const mapDispatchToProps = (dispatch) => ({
+  dispExpenses: (expenses) => dispatch(expensesAction(expenses)),
+});
 
 Wallet.propTypes = {
   email: propTypes.string,
 }.isRequired;
 
-export default connect(mapStateToProps, null)(Wallet);
+export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

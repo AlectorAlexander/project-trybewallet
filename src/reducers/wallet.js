@@ -7,7 +7,11 @@ const walle = (state = INITIAL_STATE, action) => {
   case 'WALLET': {
     const { currencies: oldsCu } = action;
     const currencies = Object.keys(oldsCu).filter((coin) => coin !== 'USDT');
-    return { currencies };
+    return { ...state, currencies };
+  }
+  case 'EXPENSE': {
+    const { expenses } = action;
+    return { ...state, expenses };
   }
   default:
     return state;
