@@ -1,14 +1,8 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { WalletAction } from '../actions';
 
 class Header extends React.Component {
-  async componentDidMount() {
-    const { WalletTry, api } = this.props;
-    WalletTry(api);
-  }
-
   render() {
     const { email, expens } = this.props;
     return (
@@ -25,13 +19,12 @@ const mapStateToProps = (state) => ({
   email: state.user.email,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  WalletTry: (api) => dispatch(WalletAction(api)),
-});
+// const mapDispatchToProps = (dispatch) => ({
+// });
 
 Header.propTypes = {
   WalletTry: propTypes.func,
   email: propTypes.string,
 }.isRequired;
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, null)(Header);

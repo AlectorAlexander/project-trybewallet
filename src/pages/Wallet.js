@@ -3,7 +3,7 @@ import propTypes from 'prop-types';
 import { connect } from 'react-redux';
 import fetchWallet from '../services/fetchWallet';
 import Header from '../components/Header';
-import { expensesAction } from '../actions';
+import { expensesAction, WalletAction } from '../actions';
 import Form from '../components/Form';
 import Table from '../components/Table';
 
@@ -19,7 +19,9 @@ class Wallet extends React.Component {
   }
 
   async componentDidMount() {
+    const { dispCurrencies } = this.props;
     const api = await fetchWallet();
+    dispCurrencies(api);
     this.setState({ currencies: api });
   }
 
@@ -87,6 +89,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispExpenses: (expenses) => dispatch(expensesAction(expenses)),
+  dispCurrencies: (currencies) => dispatch(WalletAction(currencies)),
 });
 
 Wallet.propTypes = {
