@@ -48,16 +48,25 @@ class Wallet extends React.Component {
     const { expenses } = this.state;
     dispExpenses(expenses);
     // Breno Lopes da tribo B me ajudou com a lógica do code abaixo:
-    const expense = expenses.map((element) => {
-      const { currency } = element;
-      const { exchangeRates } = element;
-      const { ask } = exchangeRates[currency];
-      const { value } = element;
-      return Number(value) * Number(ask);
-    });
-    const expenseHeader = expense.reduce((acc, crr) => Number(acc) + Number(crr))
-      .toFixed(2);
-    this.setState({ expenseHeader });
+    if (expenses.length > 0) {
+      const expense = expenses.map((element) => {
+        const { currency } = element;
+        const { exchangeRates } = element;
+        const { ask } = exchangeRates[currency];
+        const { value } = element;
+        return Number(value) * Number(ask);
+      });
+      const expenseHeader = expense.reduce((acc, crr) => Number(acc) + Number(crr))
+        .toFixed(2);
+      this.setState({ expenseHeader });
+    } else { this.setState({ expenseHeader: 0 }); }
+  }
+
+  deleteExpenses = (param) => {
+    const { expenses: ex } = this.state;
+    const thisIsNo = ex[param];
+    const expenses = ex.length === 1 ? [] : ex.filter((element) => element !== thisIsNo);
+    this.setState({ expenses }, this.addExpensesToGlobalState);
   }
 
   render() {
@@ -75,8 +84,8 @@ class Wallet extends React.Component {
           despesas={ despesas }
           addExpensesToLocalState={ this.addExpensesToLocalState }
         />
-        {expenses
-        && <Table expenses={ expenses } />}
+        {expenses && expenses.length > 0
+        && <Table deleteExpenses={ this.deleteExpenses } expenses={ expenses } />}
       </div>
     );
   }
